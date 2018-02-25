@@ -4,10 +4,12 @@ import environment.action.Action
 
 trait State {
 
-  def setActions(actions: Action*): Unit
+	private[environment] def setActions(actions: List[Action]): Unit
 
-  def getActions: List[Action]
+	private[environment] def setReward(reward: Int): Unit
 
-  def getReward: Int
+	def getActions: List[Action]
+
+	def getReward: Int
 
 }

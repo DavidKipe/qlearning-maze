@@ -4,6 +4,6 @@ import environment.state.State
 
 trait Action {
 
-  def act: State
+	def act: State
 
 }

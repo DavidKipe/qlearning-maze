@@ -4,6 +4,9 @@ import environment.state.State
 
 class BasicAction(private val label: String, protected val toState: State) extends Action {
 
+	require(label != null && label.nonEmpty, "The label of an Action can not be null or empty")
+	require(toState != null, "An Action require a target State")
+
 	override def act: State = toState
 
 	override def toString: String = label

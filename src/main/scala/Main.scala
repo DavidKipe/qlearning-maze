@@ -1,97 +1,64 @@
-import environment.action.{Action, BasicAction}
-import environment.state.{BasicState, State}
+import environment.action.Action
+import environment.maze.MazeGridBuilder
+import environment.state.State
+import learning.{QFunction, QMatrix}
 
-import scala.collection.mutable
-import scala.collection.mutable.ListBuffer
 import scala.util.Random
 
 object Main {
 
-	private val qValues = mutable.Map[(State, Action), Double]() // experience (Q matrix) // TODO create an "ad hoc" class for storing this
+	private val lRate = .8 // learning rate
 
-	private var epsilon = 0.2
+	private val dFactor = .8 // discount factor
 
-	private def episode(init: State): Unit = {
+	private var epsilon = .2
+
+	private def episode(qMatrix: QMatrix, qFunction: QFunction, init: State): Unit = {
 		println("Start episode")
 
-		var old_state: State = null
-		var curr_state = init
+		var oldState: State = null
+		var currState: State = init
 
-		val random = new Random
+		val random = new Random()
 
 		do {
-			val possible_actions = curr_state.getActions
-			var best_actions: ListBuffer[Action] = null
+			val possible_actions = currState.getActions
+			var bestActions: List[Action] = null
 
 			if (random.nextDouble < epsilon) { // epsilon greedy
-				best_actions = possible_actions.to[ListBuffer]
+				bestActions = possible_actions
 				print(" * ")
 			}
-			else {
-				best_actions = ListBuffer[Action]()
-				var max_q = Double.NegativeInfinity
+			else
+				bestActions = qMatrix.bestActions(currState)
 
-				for (a <- possible_actions) {
-					val q = qValues.getOrElse((curr_state, a), 0.0)
-					if (q == max_q) best_actions += a
-					if (q > max_q) {
-						best_actions.clear()
-						best_actions += a
-						max_q = q
-					}
-				}
-			}
+			val random_i: Int = random.nextInt(bestActions.size)
+			val selected_a: Action = bestActions(random_i)
 
-			val random_i: Int = random.nextInt(best_actions.size)
-			val selected_a: Action = best_actions(random_i)
+			val q = qFunction.update(qMatrix)(currState, selected_a) // updating the Q matrix
 
-			old_state = curr_state
-			curr_state = selected_a.act
+			oldState = currState
+			currState = selected_a.act
 
-			var max_next_q = Double.NegativeInfinity
-
-			for (a <- curr_state.getActions) {
-				val q = qValues.getOrElse((curr_state, a), 0.0)
-				if (q > max_next_q) max_next_q = q
-			}
-
-			val qValue: Double = curr_state.getReward + 0.9 * max_next_q // TODO change formula adding learning rate (wikipedia)
-
-			qValues += ((old_state, selected_a) -> qValue) // updating the Q matrix
-
-			println(old_state + " - a: " + selected_a + " - q: " + qValue)
-		} while (!(curr_state.toString == "final")) // TODO make a better condition
+			println(oldState + " " + selected_a + " - q: " + q)
+		} while (!(currState.toString == "(0,0)")) // TODO make a better condition
 		println("End episode\n")
 	}
 
 	def main(args: Array[String]): Unit = {
-		val init = new BasicState("init")
-		val s1 = new BasicState("s1", 10)
-		val s2 = new BasicState("s2", -20)
-		val s3 = new BasicState("s3")
-		val s4 = new BasicState("s4", -80)
-		val end = new BasicState("final", 100)
+		val mg = new MazeGridBuilder(4, 4)
 
-		val to_init = new BasicAction("to_init", init)
-		val to_s1 = new BasicAction("to_s1", s1)
-		val to_s2 = new BasicAction("to_s2", s2)
-		val to_s3 = new BasicAction("to_s3", s3)
-		val to_s4 = new BasicAction("to_s4", s4)
-		val to_final = new BasicAction("to_final", end)
+		val qMatrix = new QMatrix()
+		val qFunction = new QFunction(lRate, dFactor)
 
-		init.setActions(to_s1, to_s2)
-		s1.setActions(to_init, to_s2, to_s3)
-		s2.setActions(to_init, to_s1, to_s4, to_final)
-		s3.setActions(to_s4, to_s1)
-		s4.setActions(to_s3, to_s2, to_final)
-		end.setActions(to_s2, to_s4)
+		val init = mg.getInit
 
-		for (i <- 1 to 500)
-			episode(init)
+		for (i <- 1 to 1000)
+			episode(qMatrix, qFunction, mg.getRandomState)
 
 		println("Best path:")
-		epsilon = 0.0
-		episode(init)
+		epsilon = 0.0 // no more exploration
+		episode(qMatrix, qFunction, init) // start from initial point // TODO optimize this for best path, create ad hoc method
 	}
 
 }
