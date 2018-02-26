@@ -35,10 +35,10 @@ object Main {
 			val random_i: Int = random.nextInt(bestActions.size)
 			val selected_a: Action = bestActions(random_i)
 
-			val q = qFunction.update(qMatrix)(currState, selected_a) // updating the Q matrix
+			val q = qFunction.update(qMatrix, currState, selected_a) // updating the Q matrix
 
 			oldState = currState
-			currState = selected_a.act
+			currState = selected_a.act.newState
 
 			println(oldState + " " + selected_a + " - q: " + q)
 		} while (!(currState.toString == "(0,0)")) // TODO make a better condition

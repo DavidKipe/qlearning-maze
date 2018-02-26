@@ -1,5 +1,6 @@
 package learning
 
+import environment.Transition
 import environment.action.Action
 import environment.state.State
 
@@ -8,11 +9,19 @@ import scala.collection.mutable.ListBuffer
 
 class QMatrix {
 
-	private val qValues = mutable.Map[(State, Action), Double]()
+	private val qValues = mutable.Map[(State, State), Double]()
 
-	def put(state: State, action: Action)(q: Double): Unit = qValues += (state, action) -> q
+	def put(state: State, newState: State, q: Double): Unit = qValues += (state, newState) -> q
 
-	def get(state: State, action: Action): Double = qValues.getOrElse((state, action), .0)
+	def put(state: State, transition: Transition, q: Double): Unit = put(state, transition.newState, q)
+
+	def put(state: State, action: Action, q: Double): Unit = put(state, action.act, q)
+
+	def get(state: State, newState: State): Double = qValues.getOrElse((state, newState), .0)
+
+	def get(state: State, transition: Transition): Double = get(state, transition.newState)
+
+	def get(state: State, action: Action): Double = get(state, action.act)
 
 	def getMax(state: State): Double = {
 		var max_q = Double.NegativeInfinity

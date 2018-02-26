@@ -13,7 +13,7 @@ class MazeGridBuilder(val x: Int, val y: Int) {
 
 	{
 		var actionMap = Map[State, Action]() // cache for re-use the actions
-	val actionGrid = Array.ofDim[ListBuffer[Action]](x, y) // store all the actions
+		val actionGrid = Array.ofDim[ListBuffer[Action]](x, y) // store all the actions in the right grid position
 
 		def getOrNone(i: Int, j: Int): Option[BasicState] = {
 			try {
@@ -69,48 +69,34 @@ class MazeGridBuilder(val x: Int, val y: Int) {
 				createDoubleLink(i + 1, j, i, j)
 		}
 
-		/*deleteDoubleLink(1, 0, 1, 2)
-		deleteDoubleLink(2, 1, 2, 2)*/
+		// create walls
+		deleteDoubleLink(1, 0, 1, 2)
+		deleteDoubleLink(2, 1, 2, 2)
 
-		deleteDoubleLink(1, 1, 2, 1)
-		deleteDoubleLink(2, 2, 3, 2)
+//		deleteDoubleLink(1, 1, 2, 1)
+//		deleteDoubleLink(2, 2, 3, 2)
 
-		for (i <- 0 until x; j <- 0 until y) { // setting of the all actions
-			grid(i)(j).setActions(actionGrid(i)(j).toList)
-		}
-
-		/* setting the rewards */
-
-		grid(0)(0).setReward(100) // Goal
-
+		// setting the rewards
 		val positive_reward = 20
 		val nagative_reward = -2 * positive_reward
 
+		actionMap(grid(0)(0)).setReward(100) // Goal
+
+		actionMap(grid(0)(2)).setReward(positive_reward)
+		actionMap(grid(0)(3)).setReward(positive_reward)
+		actionMap(grid(2)(1)).setReward(positive_reward)
+
+		actionMap(grid(2)(3)).setReward(nagative_reward)
+		actionMap(grid(3)(1)).setReward(nagative_reward)
+
+		for (i <- 0 until x; j <- 0 until y) { // setting all actions into the states
+			grid(i)(j).setActions(actionGrid(i)(j).toList)
+		}
+
+		// Not true anymore with the new algorithm improvement
 		// Note: positive reward must be less than (('discount factor' * 'goal reward') * (1 - 'discount factor'))
+
 		// Negative reward must not be analysed in deep yet
-
-		/*grid(0)(2).setReward(positive_reward)
-		grid(0)(3).setReward(positive_reward)
-		grid(2)(1).setReward(positive_reward)
-
-		grid(2)(3).setReward(nagative_reward)
-		grid(3)(1).setReward(nagative_reward)*/
-
-		/*grid(0)(2).setReward(positive_reward)
-		grid(0)(3).setReward(positive_reward)
-		grid(2)(1).setReward(positive_reward)
-		grid(1)(1).setReward(positive_reward)
-
-		grid(2)(3).setReward(nagative_reward)
-		grid(2)(2).setReward(nagative_reward)*/
-
-		grid(1)(0).setReward(positive_reward)
-		grid(1)(1).setReward(positive_reward)
-		grid(1)(3).setReward(positive_reward)
-		grid(2)(2).setReward(positive_reward)
-
-		grid(1)(2).setReward(nagative_reward)
-		grid(3)(0).setReward(nagative_reward)
 	}
 
 	def getInit: BasicState = grid(x - 1)(y - 1)

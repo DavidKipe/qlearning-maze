@@ -6,10 +6,6 @@ trait State {
 
 	private[environment] def setActions(actions: List[Action]): Unit
 
-	private[environment] def setReward(reward: Int): Unit
-
 	def getActions: List[Action]
-
-	def getReward: Int
 
 }

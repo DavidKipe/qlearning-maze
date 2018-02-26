@@ -1,9 +1,11 @@
 package environment.action
 
-import environment.state.State
+import environment.Transition
 
 trait Action {
 
-	def act: State
+	def setReward(reward: Int): Unit
+
+	def act: Transition
 
 }
