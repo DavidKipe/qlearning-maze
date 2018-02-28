@@ -2,8 +2,7 @@ import environment.action.Action
 import environment.maze.MazeGridBuilder
 import environment.state.State
 import learning.{QFunction, QMatrix}
-
-import scala.util.Random
+import policy.{BestDeterministic, EpsilonGreedy, ExplorationPolicy}
 
 object Main {
 
@@ -11,29 +10,16 @@ object Main {
 
 	private val dFactor = .8 // discount factor
 
-	private var epsilon = .2
+	private val epsilon = .2
 
-	private def episode(qMatrix: QMatrix, qFunction: QFunction, init: State): Unit = {
+	private def episode(qMatrix: QMatrix, qFunction: QFunction, policy: ExplorationPolicy, init: State): Unit = {
 		println("Start episode")
 
 		var oldState: State = null
 		var currState: State = init
 
-		val random = new Random()
-
 		do {
-			val possible_actions = currState.getActions
-			var bestActions: List[Action] = null
-
-			if (random.nextDouble < epsilon) { // epsilon greedy
-				bestActions = possible_actions
-				print(" * ")
-			}
-			else
-				bestActions = qMatrix.bestActions(currState)
-
-			val random_i: Int = random.nextInt(bestActions.size)
-			val selected_a: Action = bestActions(random_i)
+			val selected_a: Action = policy.nextAction(currState, qMatrix)
 
 			val q = qFunction.update(qMatrix, currState, selected_a) // updating the Q matrix
 
@@ -50,15 +36,15 @@ object Main {
 
 		val qMatrix = new QMatrix()
 		val qFunction = new QFunction(lRate, dFactor)
+		val epsilonGreedy = new EpsilonGreedy(epsilon)
 
 		val init = mg.getInit
 
 		for (i <- 1 to 1000)
-			episode(qMatrix, qFunction, mg.getRandomState)
+			episode(qMatrix, qFunction, epsilonGreedy, mg.getRandomState)
 
 		println("Best path:")
-		epsilon = 0.0 // no more exploration
-		episode(qMatrix, qFunction, init) // start from initial point // TODO optimize this for best path, create ad hoc method
+		episode(qMatrix, qFunction, new BestDeterministic, init) // start from initial point // TODO optimize this for best path, create ad hoc method (not an episode, we don't need to update the qmatrix)
 	}
 
 }

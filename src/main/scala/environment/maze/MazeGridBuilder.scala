@@ -1,7 +1,7 @@
 package environment.maze
 
 import environment.action.{Action, BasicAction}
-import environment.state.{BasicState, State}
+import environment.state.BasicState
 
 import scala.collection.mutable.ListBuffer
 import scala.util.Random
@@ -12,7 +12,7 @@ class MazeGridBuilder(val x: Int, val y: Int) {
 
 
 	{
-		var actionMap = Map[State, Action]() // cache for re-use the actions
+		val actionCache = Array.ofDim[Option[Action]](x, y) // cache for re-use the actions
 		val actionGrid = Array.ofDim[ListBuffer[Action]](x, y) // store all the actions in the right grid position
 
 		def getOrNone(i: Int, j: Int): Option[BasicState] = {
@@ -24,18 +24,18 @@ class MazeGridBuilder(val x: Int, val y: Int) {
 		}
 
 		def createDoubleLink(s1_i: Int, s1_j: Int, s2_i: Int, s2_j: Int): Unit = {
-			val s1 = grid(s1_i)(s1_j)
-			val s2 = grid(s2_i)(s2_j)
-			var to_s1 = actionMap.get(s1)
-			var to_s2 = actionMap.get(s2)
+			var to_s1 = actionCache(s1_i)(s1_j)
+			var to_s2 = actionCache(s2_i)(s2_j)
 
 			if (to_s1 isEmpty) {
+				val s1 = grid(s1_i)(s1_j)
 				to_s1 = Option(new BasicAction("to->" + s1, s1))
-				actionMap += (s1 -> to_s1.get)
+				actionCache(s1_i)(s1_j) = to_s1
 			}
 			if (to_s2 isEmpty) {
+				val s2 = grid(s2_i)(s2_j)
 				to_s2 = Option(new BasicAction("to->" + s2, s2))
-				actionMap += (s2 -> to_s2.get)
+				actionCache(s2_i)(s2_j) = to_s2
 			}
 
 			actionGrid(s1_i)(s1_j) += to_s2.get
@@ -43,23 +43,25 @@ class MazeGridBuilder(val x: Int, val y: Int) {
 		}
 
 		def deleteDoubleLink(s1_i: Int, s1_j: Int, s2_i: Int, s2_j: Int): Unit = {
-			val s1 = grid(s1_i)(s1_j)
-			val s2 = grid(s2_i)(s2_j)
-			val to_s1 = actionMap.get(s1)
-			val to_s2 = actionMap.get(s2)
+			val to_s1 = actionCache(s1_i)(s1_j)
+			val to_s2 = actionCache(s2_i)(s2_j)
 			actionGrid(s1_i)(s1_j) -= to_s2.get
 			actionGrid(s2_i)(s2_j) -= to_s1.get
 		}
 
-		for (i <- 0 until x; j <- 0 until y) { // create all the states in the grid
+		for (i <- 0 until x; j <- 0 until y) { // create all the (empty) states in the grid
 			grid(i)(j) = new BasicState("(" + i + "," + j + ")")
+		}
+
+		for (i <- 0 until x; j <- 0 until y) { // initialize the cache of the actions
+			actionCache(i)(j) = None
 		}
 
 		for (i <- 0 until x; j <- 0 until y) { // initialize all the action lists in the grid
 			actionGrid(i)(j) = ListBuffer[Action]()
 		}
 
-		for (i <- 0 to x; j <- 0 to y) { // create all links
+		for (i <- 0 until x; j <- 0 until y) { // create all links (transitions) in the grid
 			val underneath = getOrNone(i, j + 1)
 			val right = getOrNone(i + 1, j)
 
@@ -78,16 +80,16 @@ class MazeGridBuilder(val x: Int, val y: Int) {
 
 		// setting the rewards
 		val positive_reward = 20
-		val nagative_reward = -2 * positive_reward
+		val negative_reward = -2 * positive_reward
 
-		actionMap(grid(0)(0)).setReward(100) // Goal
+		actionCache(0)(0).get.setReward(100) // Goal
 
-		actionMap(grid(0)(2)).setReward(positive_reward)
-		actionMap(grid(0)(3)).setReward(positive_reward)
-		actionMap(grid(2)(1)).setReward(positive_reward)
+		actionCache(0)(2).get.setReward(positive_reward)
+		actionCache(0)(3).get.setReward(positive_reward)
+		actionCache(2)(1).get.setReward(positive_reward)
 
-		actionMap(grid(2)(3)).setReward(nagative_reward)
-		actionMap(grid(3)(1)).setReward(nagative_reward)
+		actionCache(2)(3).get.setReward(negative_reward)
+		actionCache(3)(1).get.setReward(negative_reward)
 
 		for (i <- 0 until x; j <- 0 until y) { // setting all actions into the states
 			grid(i)(j).setActions(actionGrid(i)(j).toList)
