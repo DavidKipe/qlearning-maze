@@ -21,6 +21,8 @@ class EpsilonGreedy(val epsilon: Double) extends ExplorationPolicy {
 
 		val random_i: Int = random.nextInt(bestActions.size)
 		bestActions(random_i)
+
+		// TODO create exception if no action is present
 	}
 
 }

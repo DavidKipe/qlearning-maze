@@ -4,11 +4,7 @@ import environment.state.State
 
 trait Environment {
 
-	def setFinalState(state: State): Unit
-
-	def isFinal(state: State): Boolean
-
-	def setStartingState(state: State): Unit
+	def isGoal(state: State): Boolean
 
 	def getStartingState: State
 
