@@ -1,3 +1,4 @@
+import environment.Environment
 import environment.action.Action
 import environment.maze.MazeGridBuilder
 import environment.state.State
@@ -12,39 +13,53 @@ object Main {
 
 	private val epsilon = .2
 
-	private def episode(qMatrix: QMatrix, qFunction: QFunction, policy: ExplorationPolicy, init: State): Unit = {
+	private def episode(qMatrix: QMatrix, qFunction: QFunction, maze: Environment, policy: ExplorationPolicy): Unit = {
+		// TODO create ad hoc methods for exploration and best path
+		var greedy: Boolean = false
+
+		policy match {
+			case _: EpsilonGreedy => greedy = true
+			case _: BestDeterministic => greedy = false
+			case _ => // TODO error: policy did not manage yet
+		}
+
 		println("Start episode")
 
 		var oldState: State = null
-		var currState: State = init
+		var currState: State = if (greedy) maze.getRandomState else maze.getStartingState
 
 		do {
 			val selected_a: Action = policy.nextAction(currState, qMatrix)
 
-			val q = qFunction.update(qMatrix, currState, selected_a) // updating the Q matrix
+			var q = .0
+			if (greedy)
+				q = qFunction.update(qMatrix, currState, selected_a) // updating the Q matrix
 
 			oldState = currState
 			currState = selected_a.act.newState
 
-			println(oldState + " " + selected_a + " - q: " + q)
-		} while (!(currState.toString == "(0,0)")) // TODO make a better condition
+			if (greedy)
+				policy.asInstanceOf[EpsilonGreedy].printHeadAction()
+
+			print(oldState + " " + selected_a)
+			if (greedy) print(" - q: " + q)
+			println()
+		} while (!maze.isGoal(currState))
 		println("End episode\n")
 	}
 
 	def main(args: Array[String]): Unit = {
-		val mg = new MazeGridBuilder(4, 4)
+		val maze = new MazeGridBuilder(4, 4).build()
 
 		val qMatrix = new QMatrix()
 		val qFunction = new QFunction(lRate, dFactor)
 		val epsilonGreedy = new EpsilonGreedy(epsilon)
 
-		val init = mg.getInit
-
 		for (i <- 1 to 1000)
-			episode(qMatrix, qFunction, epsilonGreedy, mg.getRandomState)
+			episode(qMatrix, qFunction, maze, epsilonGreedy)
 
 		println("Best path:")
-		episode(qMatrix, qFunction, new BestDeterministic, init) // start from initial point // TODO optimize this for best path, create ad hoc method (not an episode, we don't need to update the qmatrix)
+		episode(qMatrix, qFunction, maze, new BestDeterministic())
 	}
 
 }

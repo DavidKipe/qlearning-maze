@@ -2,14 +2,13 @@ package environment.maze
 
 import environment.Environment
 import environment.action.{Action, BasicAction}
-import environment.state.BasicState
+import environment.state.{BasicState, State}
 
 import scala.collection.mutable.ListBuffer
-import scala.util.Random
 
 class MazeGridBuilder(val x: Int, val y: Int) extends GridBuilder {
 
-	protected val grid: Array[Array[BasicState]] = Array.ofDim[BasicState](x, y) // the grid of the states
+	protected val grid: Array[Array[State]] = Array.ofDim[State](x, y) // the grid of the states
 
 	// setting the constants for the rewards
 	val goalReward: Int = 100
@@ -19,8 +18,8 @@ class MazeGridBuilder(val x: Int, val y: Int) extends GridBuilder {
 	protected val actionCache: Array[Array[Option[Action]]] = Array.ofDim[Option[Action]](x, y) // cache for re-using the actions
 	protected val actionGrid: Array[Array[ListBuffer[Action]]] = Array.ofDim[ListBuffer[Action]](x, y) // store all the actions in the right grid position
 
-	protected var startingState: BasicState = _
-	protected var goalState: BasicState = _
+	protected var startingState: State = _
+	protected var goalState: State = _
 
 	/* Constructor */
 	private def createDoubleLink(s1_i: Int, s1_j: Int, s2_i: Int, s2_j: Int): Unit = { // create a link in both directions for two states in the grid
@@ -64,7 +63,8 @@ class MazeGridBuilder(val x: Int, val y: Int) extends GridBuilder {
 	//  //
 	/*  */
 
-	/* build the maze */ // TODO create methods to build a maze
+	/* build the maze */
+	// TODO create methods to build a maze
 	// create walls
 	deleteDoubleLink(1, 0, 1, 2)
 	deleteDoubleLink(2, 1, 2, 2)
@@ -81,7 +81,7 @@ class MazeGridBuilder(val x: Int, val y: Int) extends GridBuilder {
 	actionCache(2)(3).get.setReward(negativeReward)
 	actionCache(3)(1).get.setReward(negativeReward)
 
-	build()
+	//build()
 	/*  */
 
 	private def setReward(i: Int, j: Int, reward: Int): Unit = actionCache(i)(j).get.setReward(reward)
@@ -123,18 +123,11 @@ class MazeGridBuilder(val x: Int, val y: Int) extends GridBuilder {
 		for (i <- 0 until x; j <- 0 until y) { // setting all actions into the states
 			grid(i)(j).setActions(actionGrid(i)(j).toList)
 		}
-		null // TODO create environment concrete class
+
+		new Maze(grid, grid(3)(3), grid(0)(0))
 	}
+
 	/*  */
 
-	def getInit: BasicState = grid(x - 1)(y - 1)
-
-	def getRandomState: BasicState = {
-		val random = new Random()
-		val i = random.nextInt(x)
-		val j = random.nextInt(y)
-
-		grid(i)(j)
-	}
 
 }
