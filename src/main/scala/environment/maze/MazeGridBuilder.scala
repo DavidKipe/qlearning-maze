@@ -12,10 +12,10 @@ class MazeGridBuilder(val x: Int, val y: Int) extends GridBuilder {
 
 	// setting the constants for the rewards
 	val goalReward: Int = 100
-	val positiveReward: Int = 20
-	val negativeReward: Int = -2 * positiveReward
+	val positiveReward: Int = 30 // TODO create method to set the path rewards bonus (example: WEAK and STRONG rewards)
+	val negativeReward: Int = -80 //-2 * positiveReward
 
-	protected val actionCache: Array[Array[Option[Action]]] = Array.ofDim[Option[Action]](x, y) // cache for re-using the actions
+	protected val actionCache: Array[Array[Option[Action]]] = Array.ofDim[Option[Action]](x, y) // cache for re-using the actions // in position (i,j) there is the Action to go to State (i,j)
 	protected val actionGrid: Array[Array[ListBuffer[Action]]] = Array.ofDim[ListBuffer[Action]](x, y) // store all the actions in the right grid position
 
 	protected var startingState: State = _
@@ -53,37 +53,15 @@ class MazeGridBuilder(val x: Int, val y: Int) extends GridBuilder {
 		actionGrid(i)(j) = ListBuffer[Action]()
 	}
 
-	// create all links (transitions) in the grid //
-	for (i <- 0 until x - 1; j <- 0 until y - 1) {
-		createDoubleLink(i, j, i, j + 1)
-		createDoubleLink(i + 1, j, i, j)
+	for (i <- 0 until x; j <- 0 until y) { // create all links (transitions) in the grid
+		if (j < y - 1)
+			createDoubleLink(i, j, i, j + 1)
+		if (i < x - 1)
+			createDoubleLink(i + 1, j, i, j)
 	}
-	createDoubleLink(x - 1, y - 1, x - 2, y - 1)
-	createDoubleLink(x - 1, y - 1, x - 1, y - 2)
-	//  //
 	/*  */
 
-	/* build the maze */
-	// TODO create methods to build a maze
-	// create walls
-	deleteDoubleLink(1, 0, 1, 2)
-	deleteDoubleLink(2, 1, 2, 2)
-
-	//deleteDoubleLink(1, 1, 2, 1)
-	//deleteDoubleLink(2, 2, 3, 2)
-
-	actionCache(0)(0).get.setReward(100) // Goal
-
-	actionCache(0)(2).get.setReward(positiveReward)
-	actionCache(0)(3).get.setReward(positiveReward)
-	actionCache(2)(1).get.setReward(positiveReward)
-
-	actionCache(2)(3).get.setReward(negativeReward)
-	actionCache(3)(1).get.setReward(negativeReward)
-
-	//build()
-	/*  */
-
+	/* Aux funxtions */
 	private def setReward(i: Int, j: Int, reward: Int): Unit = actionCache(i)(j).get.setReward(reward)
 
 	private def deleteDoubleLink(s1_i: Int, s1_j: Int, s2_i: Int, s2_j: Int): Unit = {
@@ -93,9 +71,12 @@ class MazeGridBuilder(val x: Int, val y: Int) extends GridBuilder {
 		actionGrid(s2_i)(s2_j) -= to_s1.get
 	}
 
+	/*  */
+
 	/* GridBuilder trait */
 	override def setGoalState(i: Int, j: Int): GridBuilder = {
 		goalState = grid(i)(j)
+		setReward(i, j, goalReward)
 		this
 	}
 
@@ -124,10 +105,8 @@ class MazeGridBuilder(val x: Int, val y: Int) extends GridBuilder {
 			grid(i)(j).setActions(actionGrid(i)(j).toList)
 		}
 
-		new Maze(grid, grid(3)(3), grid(0)(0))
+		new Maze(grid, startingState, goalState)
 	}
-
 	/*  */
-
 
 }

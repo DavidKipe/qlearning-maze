@@ -1,7 +1,7 @@
 import environment.Environment
 import environment.action.Action
-import environment.maze.MazeGridBuilder
 import environment.state.State
+import examples.maze.Maze5x6
 import learning.{QFunction, QMatrix}
 import policy.{BestDeterministic, EpsilonGreedy, ExplorationPolicy}
 
@@ -14,7 +14,11 @@ object Main {
 	private val epsilon = .2
 
 	private def episode(qMatrix: QMatrix, qFunction: QFunction, maze: Environment, policy: ExplorationPolicy): Unit = {
-		// TODO create ad hoc methods for exploration and best path
+		/* TODO create ad hoc methods for exploration and best path
+		*  for best path visualize the q values without update q-matrix
+		*  and perform the average reward of the path
+		*  Furthermore, adding a comparison with other path(s)
+		* */
 		var greedy: Boolean = false
 
 		policy match {
@@ -32,7 +36,7 @@ object Main {
 			val selected_a: Action = policy.nextAction(currState, qMatrix)
 
 			var q = .0
-			if (greedy)
+			//if (greedy)
 				q = qFunction.update(qMatrix, currState, selected_a) // updating the Q matrix
 
 			oldState = currState
@@ -42,14 +46,15 @@ object Main {
 				policy.asInstanceOf[EpsilonGreedy].printHeadAction()
 
 			print(oldState + " " + selected_a)
-			if (greedy) print(" - q: " + q)
+			/*if (greedy)*/ print(" - q: " + q)
 			println()
 		} while (!maze.isGoal(currState))
 		println("End episode\n")
 	}
 
 	def main(args: Array[String]): Unit = {
-		val maze = new MazeGridBuilder(4, 4).build()
+		//val maze = Simple4x4.construct()
+		val maze = Maze5x6.construct()
 
 		val qMatrix = new QMatrix()
 		val qFunction = new QFunction(lRate, dFactor)

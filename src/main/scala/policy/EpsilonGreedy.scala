@@ -9,15 +9,17 @@ class EpsilonGreedy(val epsilon: Double) extends ExplorationPolicy {
 
 	private val random = new Random()
 
-	var lastActionIsRandom: Boolean = _
+	private var _lastActionIsRandom: Boolean = _
+
+	def lastActionIsRandom: Boolean = _lastActionIsRandom
 
 	override def nextAction(state: State, qMatrix: QMatrix): Action = {
 		var bestActions: List[Action] = null
-		lastActionIsRandom = false
+		_lastActionIsRandom = false
 
 		if (random.nextDouble < epsilon) {
 			bestActions = state.getActions
-			lastActionIsRandom = true
+			_lastActionIsRandom = true
 		}
 		else
 			bestActions = qMatrix.bestActions(state)
@@ -29,7 +31,7 @@ class EpsilonGreedy(val epsilon: Double) extends ExplorationPolicy {
 	}
 
 	def printHeadAction(): Unit = {
-		if (lastActionIsRandom)
+		if (_lastActionIsRandom)
 			print("*   ")
 		else
 			print("    ")
