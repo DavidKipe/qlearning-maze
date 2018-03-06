@@ -2,7 +2,7 @@ package learning
 
 import environment.Transition
 import environment.action.Action
-import environment.state.State
+import environment.state.{BasicState, State}
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
@@ -23,6 +23,8 @@ class QMatrix {
 
 	def get(state: State, action: Action): Double = get(state, action.act)
 
+	def getByLabel(fromLabel: String, toLabel: String): Double = get(new BasicState(fromLabel), new BasicState(toLabel))
+
 	def getMax(state: State): Double = {
 		var max_q = Double.NegativeInfinity
 
@@ -35,7 +37,7 @@ class QMatrix {
 		max_q
 	}
 
-	def bestActions(state: State): List[Action] = {
+	def bestActions(state: State): Seq[Action] = {
 		val bestActions = ListBuffer[Action]()
 		var max_q = Double.NegativeInfinity
 
@@ -49,7 +51,7 @@ class QMatrix {
 			}
 		}
 
-		bestActions.toList
+		bestActions
 	}
 
 	def bestAction(state: State): Action = {

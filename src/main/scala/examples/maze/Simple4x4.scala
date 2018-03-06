@@ -5,7 +5,7 @@ import environment.maze.{GridBuilder, MazeGridBuilder}
 
 object Simple4x4 extends MazeDirector {
 
-	override def construct(): Environment = {
+	override def construct(rewardBonus: Int = MazeGridBuilder.WEAK_REWARD): Environment = {
 		val builder: GridBuilder = new MazeGridBuilder(4, 4)
 
 		builder

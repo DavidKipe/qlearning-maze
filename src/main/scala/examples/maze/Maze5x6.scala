@@ -5,8 +5,8 @@ import environment.maze.{GridBuilder, MazeGridBuilder}
 
 object Maze5x6 extends MazeDirector {
 
-	override def construct(): Environment = {
-		val builder: GridBuilder = new MazeGridBuilder(5, 6)
+	override def construct(rewardBonus: Int = MazeGridBuilder.WEAK_REWARD): Environment = {
+		val builder: GridBuilder = new MazeGridBuilder(5, 6, rewardBonus)
 
 		builder
 			.setWall(1, 0, 1, 1)
@@ -35,5 +35,14 @@ object Maze5x6 extends MazeDirector {
 			.build()
 	}
 
-	override def showMaze(): Unit = ???
+	override def showMaze(): Unit = {
+		println("   0   1   2   3   4   5\n\n" +
+			"0  $   ·   ·   ―   ·   ·\n\n" +
+			"1  · | ·   +   ·   ·   ·\n" +
+			"      ――― ―――\n" +
+			"2  ―   ·   ·   +   ·   ―\n" +
+			"                  ――― ―――\n" +
+			"3  ·   ―   + | ―   ―   ―\n\n" +
+			"4  ·   ·   +   ·   ·   #\n\n")
+	}
 }

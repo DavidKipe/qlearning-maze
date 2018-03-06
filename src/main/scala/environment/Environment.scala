@@ -4,6 +4,8 @@ import environment.state.State
 
 trait Environment {
 
+	def gridSize: (Int, Int)
+
 	def isGoal(state: State): Boolean
 
 	def getStartingState: State

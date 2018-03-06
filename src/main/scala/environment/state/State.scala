@@ -4,8 +4,8 @@ import environment.action.Action
 
 trait State {
 
-	private[environment] def setActions(actions: List[Action]): Unit
+	private[environment] def setActions(actions: Seq[Action]): Unit
 
-	def getActions: List[Action]
+	def getActions: Seq[Action]
 
 }

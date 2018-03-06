@@ -12,6 +12,9 @@ class Maze private[maze](protected val grid: Array[Array[State]], protected val 
 
 	private val random = new Random()
 
+
+	override def gridSize: (Int, Int) = (x, y)
+
 	override def isGoal(state: State): Boolean = state equals goalState
 
 	override def getStartingState: State = startingState
@@ -21,4 +24,5 @@ class Maze private[maze](protected val grid: Array[Array[State]], protected val 
 		val j = random.nextInt(y)
 		grid(i)(j)
 	}
+
 }

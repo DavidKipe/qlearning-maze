@@ -3,17 +3,17 @@ package environment.state
 import environment.action.Action
 
 
-class BasicState(private val label: String, private var actions: List[Action]/*, private var reward: Int*/) extends State {
+class BasicState(private val label: String, private var actions: Seq[Action]) extends State {
 
 	require(label != null && label.nonEmpty, "The label of a State can not be null or empty")
 
 	def this(label: String) = this(label, List[Action]())
 
-	override private[environment] def setActions(actions: List[Action]): Unit = {
+	override private[environment] def setActions(actions: Seq[Action]): Unit = {
 		this.actions = actions
 	}
 
-	override def getActions: List[Action] = actions
+	override def getActions: Seq[Action] = actions
 
 	override def toString: String = label
 

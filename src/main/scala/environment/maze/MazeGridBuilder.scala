@@ -6,14 +6,13 @@ import environment.state.{BasicState, State}
 
 import scala.collection.mutable.ListBuffer
 
-class MazeGridBuilder(val x: Int, val y: Int) extends GridBuilder {
+class MazeGridBuilder(val x: Int, val y: Int, val rewardBonus: Int = MazeGridBuilder.WEAK_REWARD) extends GridBuilder {
 
 	protected val grid: Array[Array[State]] = Array.ofDim[State](x, y) // the grid of the states
 
-	// setting the constants for the rewards
-	val goalReward: Int = 100
-	val positiveReward: Int = 30 // TODO create method to set the path rewards bonus (example: WEAK and STRONG rewards)
-	val negativeReward: Int = -80 //-2 * positiveReward
+	// setting the constants for the rewards of this instance
+	val positiveReward: Int = rewardBonus
+	val negativeReward: Int = -2 * positiveReward
 
 	protected val actionCache: Array[Array[Option[Action]]] = Array.ofDim[Option[Action]](x, y) // cache for re-using the actions // in position (i,j) there is the Action to go to State (i,j)
 	protected val actionGrid: Array[Array[ListBuffer[Action]]] = Array.ofDim[ListBuffer[Action]](x, y) // store all the actions in the right grid position
@@ -76,7 +75,7 @@ class MazeGridBuilder(val x: Int, val y: Int) extends GridBuilder {
 	/* GridBuilder trait */
 	override def setGoalState(i: Int, j: Int): GridBuilder = {
 		goalState = grid(i)(j)
-		setReward(i, j, goalReward)
+		setReward(i, j, MazeGridBuilder.GOAL_REWARD)
 		this
 	}
 
@@ -108,5 +107,15 @@ class MazeGridBuilder(val x: Int, val y: Int) extends GridBuilder {
 		new Maze(grid, startingState, goalState)
 	}
 	/*  */
+}
+
+object MazeGridBuilder {
+
+	val GOAL_REWARD: Int = 100
+
+	val WEAK_REWARD: Int = 15
+	val STRONG_REWARD: Int = 30
 
 }
+
+
