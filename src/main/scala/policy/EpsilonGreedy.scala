@@ -1,37 +1,41 @@
 package policy
 import environment.action.Action
 import environment.state.State
+import exception.NoActionFound
 import learning.QMatrix
 
 import scala.util.Random
 
 class EpsilonGreedy(val epsilon: Double) extends ExplorationPolicy {
 
+	require(epsilon > 0.0 && epsilon < 1.0, "Epsilon value must be in interval (0.0, 1.0)")
+
 	private val random = new Random()
 
-	private var _lastActionIsRandom: Boolean = _
+	private var _isLastActionRandom: Boolean = _
 
-	def lastActionIsRandom: Boolean = _lastActionIsRandom
+	def isLastActionRandom: Boolean = _isLastActionRandom
 
 	override def nextAction(state: State, qMatrix: QMatrix): Action = {
-		var bestActions: Seq[Action] = null
-		_lastActionIsRandom = false
+		var bestActions: Seq[Action] = Seq.empty
+		_isLastActionRandom = false
 
 		if (random.nextDouble < epsilon) {
 			bestActions = state.getActions
-			_lastActionIsRandom = true
+			_isLastActionRandom = true
 		}
 		else
 			bestActions = qMatrix.bestActions(state)
 
+		if (bestActions == null || bestActions.isEmpty)
+			throw new NoActionFound(state, "Failed to found the next action")
+
 		val random_i: Int = random.nextInt(bestActions.size)
 		bestActions(random_i)
-
-		// TODO create exception if no action is present
 	}
 
 	def printHeadAction(): Unit = {
-		if (_lastActionIsRandom)
+		if (_isLastActionRandom)
 			print("*   ")
 		else
 			print("    ")

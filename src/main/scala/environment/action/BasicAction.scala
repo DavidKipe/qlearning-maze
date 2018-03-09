@@ -3,7 +3,7 @@ package environment.action
 import environment.Transition
 import environment.state.State
 
-class BasicAction(private val label: String, protected val toState: State, protected var reward: Int) extends Action {
+class BasicAction(val label: String, protected val toState: State, protected var reward: Int) extends Action {
 
 	require(label != null && label.nonEmpty, "The label of an Action can not be null or empty")
 	require(toState != null, "An Action require a target State")
@@ -11,7 +11,7 @@ class BasicAction(private val label: String, protected val toState: State, prote
 	def this(label: String, toState: State) = this(label, toState, 0)
 
 
-	override def setReward(reward: Int): Unit = this.reward = reward
+	override private[environment] def setReward(reward: Int): Unit = this.reward = reward
 
 	override def act: Transition = Transition(toState, reward)
 

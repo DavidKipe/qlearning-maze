@@ -4,7 +4,7 @@ import environment.Transition
 
 trait Action {
 
-	def setReward(reward: Int): Unit
+	private[environment] def setReward(reward: Int): Unit
 
 	def act: Transition
 

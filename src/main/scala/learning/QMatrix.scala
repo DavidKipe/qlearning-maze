@@ -3,6 +3,7 @@ package learning
 import environment.Transition
 import environment.action.Action
 import environment.state.{BasicState, State}
+import exception.NoActionFound
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
@@ -55,18 +56,22 @@ class QMatrix {
 	}
 
 	def bestAction(state: State): Action = {
-		var bestAction: Action = null
+		var bestAction: Option[Action] = None
 		var max_q = Double.NegativeInfinity
 
 		for (a <- state.getActions) {
 			val q = get(state, a)
 			if (q > max_q) {
-				bestAction = a
+				bestAction = Some(a)
 				max_q = q
 			}
 		}
 
-		bestAction
+
+		if (bestAction.isEmpty)
+			throw new NoActionFound(state, "Failed to found the best action, because such state has no action")
+		else
+			bestAction.get
 	}
 
 }

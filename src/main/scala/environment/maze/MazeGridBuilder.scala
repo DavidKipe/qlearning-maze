@@ -4,7 +4,7 @@ import environment.Environment
 import environment.action.{Action, BasicAction}
 import environment.state.{BasicState, State}
 
-import scala.collection.mutable.ListBuffer
+import scala.collection.mutable.ArrayBuffer
 
 class MazeGridBuilder(val x: Int, val y: Int, val rewardBonus: Int = MazeGridBuilder.WEAK_REWARD) extends GridBuilder {
 
@@ -15,7 +15,7 @@ class MazeGridBuilder(val x: Int, val y: Int, val rewardBonus: Int = MazeGridBui
 	val negativeReward: Int = -2 * positiveReward
 
 	protected val actionCache: Array[Array[Option[Action]]] = Array.ofDim[Option[Action]](x, y) // cache for re-using the actions // in position (i,j) there is the Action to go to State (i,j)
-	protected val actionGrid: Array[Array[ListBuffer[Action]]] = Array.ofDim[ListBuffer[Action]](x, y) // store all the actions in the right grid position
+	protected val actionGrid: Array[Array[ArrayBuffer[Action]]] = Array.ofDim[ArrayBuffer[Action]](x, y) // store all the actions in the right grid position
 
 	protected var startingState: State = _
 	protected var goalState: State = _
@@ -49,7 +49,7 @@ class MazeGridBuilder(val x: Int, val y: Int, val rewardBonus: Int = MazeGridBui
 	}
 
 	for (i <- 0 until x; j <- 0 until y) { // initialize all the action lists in the grid
-		actionGrid(i)(j) = ListBuffer[Action]()
+		actionGrid(i)(j) = new ArrayBuffer[Action](4) // with an ArrayBuffer set with the starting size (max four actions per state)
 	}
 
 	for (i <- 0 until x; j <- 0 until y) { // create all links (transitions) in the grid
@@ -60,7 +60,7 @@ class MazeGridBuilder(val x: Int, val y: Int, val rewardBonus: Int = MazeGridBui
 	}
 	/*  */
 
-	/* Aux funxtions */
+	/* Aux functions */
 	private def setReward(i: Int, j: Int, reward: Int): Unit = actionCache(i)(j).get.setReward(reward)
 
 	private def deleteDoubleLink(s1_i: Int, s1_j: Int, s2_i: Int, s2_j: Int): Unit = {
@@ -110,6 +110,7 @@ class MazeGridBuilder(val x: Int, val y: Int, val rewardBonus: Int = MazeGridBui
 }
 
 object MazeGridBuilder {
+	// Standard values for maze rewards
 
 	val GOAL_REWARD: Int = 100
 
@@ -117,5 +118,3 @@ object MazeGridBuilder {
 	val STRONG_REWARD: Int = 30
 
 }
-
-
