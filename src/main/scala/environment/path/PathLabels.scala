@@ -29,7 +29,7 @@ class PathLabels(val startingSize: Int = 0) extends Iterable[String] {
 		for (label <- this) {
 			i += 1
 			strPath ++= label
-			if (i < steps)
+			if (i <= steps)
 				strPath ++= " -> "
 		}
 		strPath.toString
