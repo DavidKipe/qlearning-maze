@@ -15,9 +15,16 @@ object Main {
 
 
 	def main(args: Array[String]): Unit = {
+		var c: Char = '?'
+		while (c != 'w' && c != 's') {
+			print("Choose the reward bonus [w = weak, s = strong]: ")
+			c = scala.io.StdIn.readChar()
+		}
+		val rewardType = if (c == 'w') MazeGridBuilder.WEAK_REWARD else MazeGridBuilder.STRONG_REWARD
+
 		val mazeDir = Maze5x6
 
-		val maze = mazeDir.construct(MazeGridBuilder.STRONG_REWARD)
+		val maze = mazeDir.construct(rewardType)
 
 		val qMatrix = new QMatrix()
 		val qFunction = new QFunction(lRate, dFactor)
@@ -40,6 +47,5 @@ object Main {
 		val path11 = new PathLabels(11) -> (4,5) -> (4,4) -> (4,3) -> (4,2) -> (3,2) -> (2,2) -> (2,3) -> (1,3) -> (1,2) -> (0,2) -> (0,1) -> (0,0)
 		Analyze.path(qMatrix, path11)
 	}
-
 
 }
