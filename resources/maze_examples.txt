@@ -1,0 +1,38 @@
+The maze is a matrix (grid). There can be the walls and positive/negative intermediate rewards.
+
+#: init state
+$: final state
++: positive reward
+-: negative reward
+·: no reward
+|,―: wall
+
+
+
+Maze5x6:
+
+   0   1   2   3   4   5
+
+0  $   ·   ·   ―   ·   ·
+
+1  · | ·   +   ·   ·   ·
+      ――― ―――
+2  ―   ·   ·   +   ·   ―
+                  ――― ―――
+3  ·   ―   + | ―   ―   ―
+
+4  ·   ·   +   ·   ·   #
+
+
+
+Simple4x4:
+
+   0   1   2   3 
+
+0  $   ·   +   + 
+
+1  · | ·   ·   · 
+
+2  ·   + | ·   ―
+                 
+3  ·   ―   ·   # 

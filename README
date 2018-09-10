@@ -1,0 +1,29 @@
+Davide Paparella - Università degli studi di Genova
+
+Project for Machine Learning course 2017/2018
+
+
+
+This project is written in Scala language.
+
+To write and execute this code I used the IntelliJ IDEA IDE [https://www.jetbrains.com/idea/].
+Thus I suggest to use IntelliJ IDEA to run this project, the community edition will be enough.
+
+To allow IntelliJ IDEA to recnognize Scala source code, a plug-in must be installed.
+Here is the official guide of JetBrains for using IntelliJ with Scala:
+https://www.jetbrains.com/help/idea/discover-intellij-idea-for-scala.html
+
+
+The project simulates a labyrinth in which a mouse (our agent) will learn how to reach the goal (the cheese) traveling the best route. Inside the maze there are also intermediate rewards, positive and negative.
+
+This project has already a main class and a simple example maze to test the algorithm.
+By launching it you will be asked for choosing the reward bonus value, the choices will be "STRONG" or "WEAK". This is referred to the intermediate bonus, the goal bonus is always the same.
+After that will be asked the number of episodes to execute. I suggest at least one hundred episodes.
+At this point the algorithm is running and after few moment the result will be shown.
+
+The result needs a brief explanation:
+The best path is the path found by the algorithm and the one that the agent will choose.
+The other three paths are the three best paths for the maze, especially the race is between the first path with nine steps and the last with eleven steps.
+We can observe that if we choose strong rewards the agent tends to choose the path with eleven steps, even if it has two more steps, vice versa the agent tends to choose the first path with nine steps, the shorter path.
+
+Inside the repository there is the "resources" folder, which helps to understand the maze used for the test.
