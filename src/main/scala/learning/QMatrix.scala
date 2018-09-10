@@ -10,7 +10,11 @@ import scala.collection.mutable.ListBuffer
 
 class QMatrix {
 
-	private val qValues = mutable.Map[(State, State), Double]()
+	/*
+		This class implements the q-matrix structure. It provides methods to put and get values from the matrix and other methods on the actions
+	 */
+
+	private val qValues = mutable.Map[(State, State), Double]() // this is the real q-matrix, it is a map from a pair of State (fromState, toState) to a real number
 
 	def put(state: State, newState: State, q: Double): Unit = qValues += (state, newState) -> q
 
@@ -26,7 +30,7 @@ class QMatrix {
 
 	def getByLabel(fromLabel: String, toLabel: String): Double = get(new BasicState(fromLabel), new BasicState(toLabel))
 
-	def getMax(state: State): Double = {
+	def getMax(state: State): Double = { // return the highest value for an Action given a State
 		var max_q = Double.NegativeInfinity
 
 		for (a <- state.getActions) {
@@ -38,7 +42,7 @@ class QMatrix {
 		max_q
 	}
 
-	def bestActions(state: State): Seq[Action] = {
+	def bestActions(state: State): Seq[Action] = { // returns the best actions for a State
 		val bestActions = ListBuffer[Action]()
 		var max_q = Double.NegativeInfinity
 
@@ -55,7 +59,7 @@ class QMatrix {
 		bestActions
 	}
 
-	def bestAction(state: State): Action = {
+	def bestAction(state: State): Action = { // returns only the first best action found for a State
 		var bestAction: Option[Action] = None
 		var max_q = Double.NegativeInfinity
 

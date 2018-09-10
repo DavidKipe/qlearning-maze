@@ -7,10 +7,11 @@ import environment.state.{BasicState, State}
 import scala.collection.mutable.ArrayBuffer
 
 class MazeGridBuilder(val x: Int, val y: Int, val rewardBonus: Int = MazeGridBuilder.WEAK_REWARD) extends GridBuilder {
+	// this class builds the maze structure and exposes methods to create a maze
 
 	protected val grid: Array[Array[State]] = Array.ofDim[State](x, y) // the grid of the states
 
-	// setting the constants for the rewards of this instance
+	// setting of the reward constants for this instance
 	val positiveReward: Int = rewardBonus
 	val negativeReward: Int = -2 * positiveReward
 
@@ -69,7 +70,6 @@ class MazeGridBuilder(val x: Int, val y: Int, val rewardBonus: Int = MazeGridBui
 		actionGrid(s1_i)(s1_j) -= to_s2.get
 		actionGrid(s2_i)(s2_j) -= to_s1.get
 	}
-
 	/*  */
 
 	/* GridBuilder trait */

@@ -12,7 +12,7 @@ class EpsilonGreedy(val epsilon: Double) extends ExplorationPolicy {
 
 	private val random = new Random()
 
-	private var _isLastActionRandom: Boolean = _
+	private var _isLastActionRandom: Boolean = _ // only for printing help
 
 	def isLastActionRandom: Boolean = _isLastActionRandom
 
@@ -20,18 +20,18 @@ class EpsilonGreedy(val epsilon: Double) extends ExplorationPolicy {
 		var bestActions: Seq[Action] = Seq.empty
 		_isLastActionRandom = false
 
-		if (random.nextDouble < epsilon) {
-			bestActions = state.getActions
+		if (random.nextDouble < epsilon) { // if the random value is less than epsilon value
+			bestActions = state.getActions // all the actions are possible
 			_isLastActionRandom = true
 		}
 		else
-			bestActions = qMatrix.bestActions(state)
+			bestActions = qMatrix.bestActions(state) // otherwise get only the best actions (probably one, but could be more)
 
 		if (bestActions == null || bestActions.isEmpty)
 			throw new NoActionFound(state, "Failed to found the next action")
 
-		val random_i: Int = random.nextInt(bestActions.size)
-		bestActions(random_i)
+		val random_i: Int = random.nextInt(bestActions.size) // select a random action
+		bestActions(random_i) // return the action
 	}
 
 	def printHeadAction(): Unit = {

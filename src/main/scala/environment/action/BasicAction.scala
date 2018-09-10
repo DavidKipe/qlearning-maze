@@ -3,7 +3,7 @@ package environment.action
 import environment.Transition
 import environment.state.State
 
-class BasicAction(val label: String, protected val toState: State, protected var reward: Int) extends Action {
+class BasicAction(val label: String, protected val toState: State, protected var reward: Int) extends Action { // the only type of action in this project (the label [String] is the identifier of a BasicAction)
 
 	require(label != null && label.nonEmpty, "The label of an Action can not be null or empty")
 	require(toState != null, "An Action require a target State")

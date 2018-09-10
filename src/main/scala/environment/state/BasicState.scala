@@ -3,7 +3,7 @@ package environment.state
 import environment.action.Action
 
 
-class BasicState(val label: String, protected var actions: Seq[Action]) extends State {
+class BasicState(val label: String, protected var actions: Seq[Action]) extends State { // the only type of state in this project (the label [String] is the identifier of a BasicState)
 
 	require(label != null && label.nonEmpty, "The label of a State can not be null or empty")
 

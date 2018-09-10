@@ -8,9 +8,9 @@ import exception.NoSuchPathFound
 import learning.QMatrix
 import policy.BestDeterministic
 
-object Analyze {
+object Analyze { // this static methods analyze the paths to printing information about the process
 
-	def bestPath(qMatrix: QMatrix, maze: Environment): Unit = {
+	def bestPath(qMatrix: QMatrix, maze: Environment): Unit = { // given a maze it follows the best path using the best deterministic policy
 		val policy = new BestDeterministic()
 
 		var currState: State = maze.getStartingState
@@ -40,7 +40,7 @@ object Analyze {
 		println("Average of reward bonus: " + (qSum / nStep))
 	}
 
-	def path(qMatrix: QMatrix, path: PathLabels): Unit = {
+	def path(qMatrix: QMatrix, path: PathLabels): Unit = { // simply follows the path given on the q-matrix (no maze is )
 		var qSum = 0.0
 
 		println("Path: " + path)
