@@ -1,4 +1,4 @@
-Davide Paparella - Università degli studi di Genova
+Davide P. - Università degli studi di Genova
 
 Project for Machine Learning course 2017/2018
 
@@ -9,7 +9,7 @@ This project is written in Scala language.
 To write and execute this code I used the IntelliJ IDEA IDE [https://www.jetbrains.com/idea/].
 Thus I suggest to use IntelliJ IDEA to run this project, the community edition will be enough.
 
-To allow IntelliJ IDEA to recnognize Scala source code, a plug-in must be installed.
+To allow IntelliJ IDEA to recognize Scala source code, a plug-in must be installed.
 Here is the official guide of JetBrains for using IntelliJ with Scala:
 https://www.jetbrains.com/help/idea/discover-intellij-idea-for-scala.html
 
